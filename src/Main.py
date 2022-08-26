@@ -10,22 +10,24 @@ from Seeder import Seeder
 class Main:
     async def main(self):
         load_dotenv()
-
-        client = MongoClient(os.getenv("MONGODB_HOST"),
-                             int(os.getenv("MONGODB_PORT")))
-
-        db = client.crawler_db
-        db.websites.create_index(('url'), unique=True)
+        db = await self.__init_database()
         websites = db.websites
 
         seeder = Seeder()
         await seeder.main(websites)
         downloader = Downloader()
-        await downloader.main(client)
+        await downloader.main(websites)
+
+    async def __init_database(self):
+        client = MongoClient(os.getenv("MONGODB_HOST"),
+                             int(os.getenv("MONGODB_PORT")))
+
+        db = client.crawler_db
+        db.websites.create_index(('url'), unique=True)
+        return db
 
 
-main = Main()
-asyncio.run(main.main())
+asyncio.run(Main().main())
 
 
 # Tests to perform:
