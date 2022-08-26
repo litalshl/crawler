@@ -1,9 +1,10 @@
 # Assumes a local MongoDB is installed: https://www.mongodb.com/try/download/community?tck=docs_server
-# pip install requests lxml pymongo
+# pip install requests lxml pymongo pandas
 import requests
 from lxml import etree
 from pymongo import MongoClient
 import sys
+import pandas as pd
 
 # TODO: Read the connection details from setting file
 client = MongoClient('localhost', 27017)
@@ -11,23 +12,26 @@ client = MongoClient('localhost', 27017)
 db = client.crawler_db
 result = db.websites.create_index(('url'), unique=True)
 websites = db.websites
-website = {
-    "url" : "https://www.vortex.com/",
-    "numPagesToDownload" : 3,
-    "downloadedPages" : 0,
-    "maxConcurrentConnections" : 2
- }
-try:
-    websites.update_one({'url': website["url"]}, {"$set":{
-        "numPagesToDownload" : website["numPagesToDownload"],
-        "downloadedPages" : website["numPagesToDownload"],
-        "maxConcurrentConnections" : website["maxConcurrentConnections"],
-        "dom" : "",
-        "urls" : [],
-        "pages": []
-    }}, upsert=True)
-except:
-    print("Website was not added to DB, error: ", sys.exc_info()[0]) 
+
+# TODO: get filename from settings
+df = pd.read_csv("seed.csv")  
+for index, row in df.iterrows():
+    website = {
+        "url" : row["website_host"],
+        "numPagesToDownload" : row[" number_of_pages_to_download"],    
+        "maxConcurrentConnections" : 2  #TODO: get from settings   
+    }
+    try:
+        websites.update_one({'url': website["url"]}, {"$set":{
+            "numPagesToDownload" : website["numPagesToDownload"],        
+            "maxConcurrentConnections" : website["maxConcurrentConnections"],
+            "downloadedPages" : 0,
+            "dom" : "",
+            "urls" : [],
+            "pages": []
+        }}, upsert=True)
+    except:
+        print("Website was not added to DB, error: ", sys.exc_info()[0]) 
 
 # Downloader and scrapper basic functionality
 URL = "https://www.vortex.com/"
