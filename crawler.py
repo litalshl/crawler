@@ -1,5 +1,3 @@
-# Assumes a local MongoDB is installed: https://www.mongodb.com/try/download/community?tck=docs_server
-# pip install requests lxml pymongo pandas python-dotenv
 import requests
 from lxml import etree
 from pymongo import MongoClient
@@ -23,7 +21,7 @@ for index, row in df.iterrows():
         websites.update_one({'url': row["website_host"]}, 
         {"$set":{
             "numPagesToDownload" : row[" number_of_pages_to_download"],        
-            "maxConcurrentConnections" : int(os.getenv("MAX_CONCURRENT_CONNECTIONS")),
+            "maxConcurrentConnections" : int(os.getenv("MAX_CONCURRENT_CONNECTIONS_WEBSITE")),
             "downloadedPages" : 0,
             "dom" : "",
             "urls" : [],
