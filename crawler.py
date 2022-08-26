@@ -1,30 +1,29 @@
 # Assumes a local MongoDB is installed: https://www.mongodb.com/try/download/community?tck=docs_server
-# pip install requests lxml pymongo pandas
+# pip install requests lxml pymongo pandas python-dotenv
 import requests
 from lxml import etree
 from pymongo import MongoClient
 import sys
 import pandas as pd
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 # TODO: Read the connection details from setting file
-client = MongoClient('localhost', 27017)
+client = MongoClient(os.getenv("MONGODB_HOST"), int(os.getenv("MONGODB_PORT")))
 
 db = client.crawler_db
 result = db.websites.create_index(('url'), unique=True)
 websites = db.websites
 
 # TODO: get filename from settings
-df = pd.read_csv("seed.csv")  
-for index, row in df.iterrows():
-    website = {
-        "url" : row["website_host"],
-        "numPagesToDownload" : row[" number_of_pages_to_download"],    
-        "maxConcurrentConnections" : 2  #TODO: get from settings   
-    }
+df = pd.read_csv(os.getenv("CSV_FILE"))  
+for index, row in df.iterrows():    
     try:
-        websites.update_one({'url': website["url"]}, {"$set":{
-            "numPagesToDownload" : website["numPagesToDownload"],        
-            "maxConcurrentConnections" : website["maxConcurrentConnections"],
+        websites.update_one({'url': row["website_host"]}, 
+        {"$set":{
+            "numPagesToDownload" : row[" number_of_pages_to_download"],        
+            "maxConcurrentConnections" : int(os.getenv("MAX_CONCURRENT_CONNECTIONS")),
             "downloadedPages" : 0,
             "dom" : "",
             "urls" : [],
