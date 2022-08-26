@@ -13,7 +13,7 @@ class Seeder:
 
     async def __produce_url_message(self, url):
         try:
-            self.producer = AIOKafkaProducer(bootstrap_servers=['localhost:29092'], 
+            self.producer = AIOKafkaProducer(bootstrap_servers=['localhost:29092'],
                                              value_serializer=lambda m: json.dumps(m).encode('ascii'))
             await self.producer.send("downloader-topic", b"Super message")
             # await self.producer.send('downloader-topic', {'url': url})

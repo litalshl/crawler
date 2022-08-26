@@ -3,7 +3,6 @@ import asyncio
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from Downloader import Downloader
-
 from Seeder import Seeder
 
 

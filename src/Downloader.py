@@ -6,7 +6,6 @@ import requests
 from lxml import etree
 import sys
 from aiokafka import AIOKafkaConsumer
-
 from Scrapper import Scrapper
 
 
@@ -14,8 +13,8 @@ class Downloader:
 
     async def main(self, websites):
         self.consumer = AIOKafkaConsumer('downloader-topic',
-                                    bootstrap_servers=['localhost:29092'], group_id='crawler',
-                                    value_deserializer=lambda m: json.loads(m.decode('ascii')))
+                                         bootstrap_servers=['localhost:29092'], group_id='crawler',
+                                         value_deserializer=lambda m: json.loads(m.decode('ascii')))
         await self.consumer.start()
         await self.__consume_url_message(websites)
 
