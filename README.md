@@ -46,7 +46,7 @@ https://www.mongodb.com/try/download/community?tck=docs_server
 
 - The application uses the following libraries:
 ```
-pip install requests lxml pymongo pandas python-dotenv
+pip install requests lxml pymongo pandas python-dotenv kafka
 ```
 
 - To use different csv file, set in the .env file the parameter
