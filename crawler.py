@@ -15,14 +15,17 @@ website = {
     "url" : "https://www.vortex.com/",
     "numPagesToDownload" : 3,
     "downloadedPages" : 0,
-    "maxConcurrentConnections" : 2,
-    "urls" : [],
-    "pages" : []
+    "maxConcurrentConnections" : 2
  }
 try:
-    website_id = websites.insert_one(website).inserted_id    
-    print(website_id)
-    # TODO: add DB website_id to the url message
+    websites.update_one({'url': website["url"]}, {"$set":{
+        "numPagesToDownload" : website["numPagesToDownload"],
+        "downloadedPages" : website["numPagesToDownload"],
+        "maxConcurrentConnections" : website["maxConcurrentConnections"],
+        "dom" : "",
+        "urls" : [],
+        "pages": []
+    }}, upsert=True)
 except:
     print("Website was not added to DB, error: ", sys.exc_info()[0]) 
 
