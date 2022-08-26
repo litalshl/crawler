@@ -3,7 +3,7 @@ import os
 import sys
 from typing import Collection
 import pandas as pd
-from kafka import KafkaProducer
+from aiokafka import AIOKafkaProducer
 
 
 class Seeder:
@@ -12,7 +12,7 @@ class Seeder:
         await self.__produce_url_message()
 
     async def __produce_url_message(self):
-        producer = KafkaProducer(bootstrap_servers=['localhost:29092'],
+        producer = AIOKafkaProducer(bootstrap_servers=['localhost:29092'],
                                  value_serializer=lambda m: json.dumps(m).encode('ascii'))
         producer.send('my-topic', {'key': 'value'})
 
