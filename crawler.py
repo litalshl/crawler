@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-# TODO: Read the connection details from setting file
+
 client = MongoClient(os.getenv("MONGODB_HOST"), int(os.getenv("MONGODB_PORT")))
 
 db = client.crawler_db
@@ -39,6 +39,7 @@ if resp.status_code == 200:
     # Create DOM from HTML text
     dom = etree.HTML(resp.text)
     websiteDoc = client.crawler_db.websites.find_one({'url': URL})
+    websiteDoc["dom"] = dom
     # Search for the <a> element and get the href, check if is a subpage of the original website
     for elt in dom.xpath('//a'):
         if URL in elt.attrib['href']:
@@ -51,7 +52,11 @@ if resp.status_code == 200:
             websiteDoc["urls"].append(page["url"])
             websiteDoc["pages"].append(page)
             try:
-                client.db.collection.update_one({'url': URL}, {"$set":{"urls":websiteDoc["urls"], "pages":websiteDoc["pages"]}})
+                client.db.collection.update_one({'url': URL}, 
+                {"$set":{
+                    "dom" : str(websiteDoc["dom"]),
+                    "urls" : websiteDoc["urls"], 
+                    "pages" : websiteDoc["pages"]}})
             except:
                 print("Website document was not updated in DB, error: ", sys.exc_info()[0])
 
