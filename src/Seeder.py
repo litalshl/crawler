@@ -3,7 +3,6 @@ import os
 import sys
 from typing import Collection
 import pandas as pd
-from aiokafka import AIOKafkaProducer
 
 
 class Seeder:
@@ -13,10 +12,8 @@ class Seeder:
 
     async def __produce_url_message(self, url):
         try:
-            self.producer = AIOKafkaProducer(bootstrap_servers=['localhost:29092'],
-                                             value_serializer=lambda m: json.dumps(m).encode('ascii'))
-            await self.producer.send("downloader-topic", b"Super message")
-            # await self.producer.send('downloader-topic', {'url': url})
+            # TODO: add url to urls queue
+            print()
         except:
             print("Exception while producing url message, error: ",
                   sys.exc_info()[0])
@@ -42,6 +39,4 @@ class Seeder:
                 await self.__produce_url_message(row["website_host"])
             except:
                 print("Exception while producing url message, error: ",
-                      sys.exc_info()[0])
-            finally:
-                await self.producer.stop()
+                      sys.exc_info()[0])            

@@ -5,24 +5,19 @@ from typing import Collection
 import requests
 from lxml import etree
 import sys
-from aiokafka import AIOKafkaConsumer
 from Scrapper import Scrapper
 
 
 class Downloader:
 
     async def main(self, websites):
-        self.consumer = AIOKafkaConsumer('downloader-topic',
-                                         bootstrap_servers=['localhost:29092'], group_id='crawler',
-                                         value_deserializer=lambda m: json.loads(m.decode('ascii')))
-        await self.consumer.start()
         await self.__consume_url_message(websites)
 
     async def __consume_url_message(self, websites):
         try:
-            async for message in self.consumer:
-                print("consumed: ", message.topic, message.partition, message.offset,
-                      message.key, message.value, message.timestamp)
+            # TODO: read urls from urls queue
+            urls = []
+            for message in urls:
                 retries = 0
                 try:
                     url = message.value
@@ -38,14 +33,10 @@ class Downloader:
         except:
             print("Error while consuming message from Kafka, error: ",
                   sys.exc_info()[0])
-        finally:
-            # Will leave consumer group; perform autocommit if enabled.
-            await self.consumer.stop()
 
     async def __download_page(url: str, retries: int, websites: Collection):
         resp = requests.get(url)
         if resp.status_code == 200:
-            # Create DOM from HTML text
             dom = etree.HTML(resp.text)
             try:
                 websites.update_one({'url': url},
