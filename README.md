@@ -25,7 +25,6 @@ The crawler saves all data in MongoDB. Currently in a single websites collection
     maxConcurrentConnections : int
     downloadedPages : int
     dom : string
-    urls : string[]
     pages: [
         {
             url : string

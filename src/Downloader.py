@@ -21,6 +21,10 @@ class Downloader:
             retries = 0
             while self.urls:
                     url = self.urls.pop()
+                    website_url = urllib.parse.urljoin(url, '/')
+                    website_doc = websites.find_one({"url": website_url})
+                    if website_doc and website_doc["downloadedPages"] >= website_doc["numPagesToDownload"]:
+                        continue
                     dom = await asyncio.get_event_loop().create_task(self.__download_page(url, retries, websites))                    
                     scrapper = Scrapper()
                     await asyncio.get_event_loop().create_task(scrapper.scrape_page(url, dom, websites, self.urls))

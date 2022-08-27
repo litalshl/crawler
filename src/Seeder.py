@@ -26,8 +26,7 @@ class Seeder:
                                         "numPagesToDownload": row[" number_of_pages_to_download"],
                                         "maxConcurrentConnections": int(os.getenv("MAX_CONCURRENT_CONNECTIONS_WEBSITE")),
                                         "downloadedPages": 0,
-                                        "dom": "",
-                                        "urls": [],
+                                        "dom": "",                                        
                                         "pages": []
                                     }}, upsert=True)
             except:
