@@ -15,34 +15,24 @@ For each website host in the CSV file, the crawler will save it's HTML content a
 For all referred pages that are on the same website host, the crawler will do the same, save their content and scrap the urls for more unreached pages.
 
 This diagram describes the application components and interactions:
+
 ![ScreenShot](CrawlerDesign.jpg)
 
 The crawler saves all data in MongoDB. Currently in a single websites collection, with the below document schema:
-
+```
     url : string <index>
-
     numPagesToDownload : int   
-
     maxConcurrentConnections : int
-
     downloadedPages : int
-
     dom : string
-
     urls : string[]
-
     pages: [
-
         {
-
             url : string
-
             dom : string
-
         }
-
     ]
-
+```
 - The application requires MongoDB. Connection details can be defined in the .env file as MONGODB_HOST and MONGODB_PORT. Currently supports no authentication connection only.
 For quick localhost install, you can refer to this website: 
 https://www.mongodb.com/try/download/community?tck=docs_server
