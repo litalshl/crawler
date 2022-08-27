@@ -1,0 +1,12 @@
+website_host, number_of_pages_to_download
+http://itcorp.com/, 4
+https://www.vortex.com/, 7
+https://www.tic.com/, 8
+https://www.cfg.com/, 10
+https://www.fogcam.org/, 15
+http://acme.com/, 3
+http://www.pmichaud.com/, 10
+http://milk.com/, 7
+http://home.mcom.com/home/welcome.html, 3
+https://www.w3.org/History.html, 2
+http://www.dolekemp96.org/, 6
