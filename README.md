@@ -65,15 +65,21 @@ DOWNLOAD_RETRIES_INTERVAL_SEC - time between download retries in seconds - defau
 
 # Scalability
 
-For scalable use, it is recommended to deploy each component on a seperate container and change the urls queue to Kafka topic.
+For scalable use, it is recommended to deploy each component on a separate container and change the urls set to Kafka topic. Components are: Seeder, Scrapper and Downolader.
 
+The Downloader will be the consumer of the urls topic and the Seeder and Scrapper will be the producers.
+
+Each component could then scale horizontally and limitations to number of concurrent connections could be met by limiting the number of container instances.
+
+For large seed files, it might be beneficial to split the file between the Seeder instances.
 
 # Issues to fix:
 
-1. Urls set has duplicates when there's a query string e.g. http://www.pmichaud.com/wiki/Pm/HomePage?action=edit and http://www.pmichaud.com/wiki/Pm/HomePage?action=diff
-2. Need to add tests - units and integration tests based on the description below.
-3. Some urls content are not saved in DB with TypeError
-4. Scrapper sometimes has KeyError exception
+1. Concurency should be improved or moved to a scalable solution (see Scalbility section above. The application doesn't currently satisfy the concurrent connections requirement 
+2. Urls set has duplicates when there's a query string e.g. http://www.pmichaud.com/wiki/Pm/HomePage?action=edit and http://www.pmichaud.com/wiki/Pm/HomePage?action=diff
+3. Need to add tests - units and integration tests based on the description below.
+4. Some urls content are not saved in DB with TypeError
+5. Scrapper sometimes has KeyError exception
 
 # Tests to perform:
 
