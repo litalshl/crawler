@@ -15,7 +15,10 @@ class Main:
         seeder = Seeder()
         await asyncio.get_event_loop().create_task(seeder.main(websites, urls))
         downloader = Downloader()
-        await asyncio.get_event_loop().create_task(downloader.main(websites, urls))        
+        await asyncio.get_event_loop().create_task(downloader.main(websites, urls))  
+        websiteDocs = websites.find({})
+        for document in websiteDocs:
+          print(document)      
 
     async def __init_database(self):
         client = MongoClient(os.getenv("MONGODB_HOST"),

@@ -63,7 +63,10 @@ class Downloader:
             "url": url,
             "dom": str(dom)
         })
+        downloaded_pages = website_doc['downloadedPages']
+        downloaded_pages+= 1
         websites.update_one({'url': website_url},
                     {"$set": {
-                        "pages": pages
+                        "pages": pages,
+                        "downloadedPages": downloaded_pages
                     }}) 

@@ -73,6 +73,7 @@ For scalable use, it is recommended to deploy each component on a seperate conta
 1. Urls set has duplicates of the form of actions on the same webpage, like http://www.pmichaud.com/wiki/Pm/HomePage?action=edit
    and http://www.pmichaud.com/wiki/Pm/HomePage?action=diff
 2. Need to add tests - units and integration tests based on the description below.
+3. Some urls content are not saved in DB with TypeError
 
 # Tests to perform:
 
