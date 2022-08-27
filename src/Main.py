@@ -4,18 +4,23 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 from Downloader import Downloader
 from Seeder import Seeder
+from concurrent.futures import ProcessPoolExecutor
 
 
 class Main:
-    async def main(self):
+    async def __main__(self):
         load_dotenv()
         db = await self.__init_database()
-        websites = db.websites        
+        websites = db.websites
         urls = set()
         seeder = Seeder()
-        await asyncio.get_event_loop().create_task(seeder.main(websites, urls))
-        downloader = Downloader()
-        await asyncio.get_event_loop().create_task(downloader.main(websites, urls))              
+        if __name__ == '__main__':
+            concurrent_connections = int(os.getenv("MAX_OVERALL_CONNECTIONS"))
+            executor = ProcessPoolExecutor(concurrent_connections)
+            loop = asyncio.get_event_loop()
+            loop.run_in_executor(executor, await seeder.main(websites, urls))
+            downloader = Downloader()
+            loop.run_in_executor(executor, await downloader.main(websites, urls))        
 
     async def __init_database(self):
         client = MongoClient(os.getenv("MONGODB_HOST"),
@@ -26,4 +31,4 @@ class Main:
         return db
 
 
-asyncio.run(Main().main())
+asyncio.run(Main().__main__())
