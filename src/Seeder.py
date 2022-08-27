@@ -1,13 +1,11 @@
-import json
 import os
 import sys
-from typing import Collection
 import pandas as pd
 
 
 class Seeder:
 
-    async def main(self, websites: Collection, urls):
+    async def main(self, websites, urls):
         self.urls = urls
         await self.__data_seeder(websites)
 
@@ -15,11 +13,12 @@ class Seeder:
         try:
             # TODO: for a scalable solution, produce the message to Kafka topic here
             self.urls.add(url)
+            print("Seeder added new url: ", url)
         except:
             print("Exception while producing url message, error: ",
                   sys.exc_info()[0])
 
-    async def __data_seeder(self, websites: Collection):
+    async def __data_seeder(self, websites):
         dataframe = pd.read_csv(os.getenv("CSV_FILE"))
         for index, row in dataframe.iterrows():
             try:

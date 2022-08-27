@@ -1,4 +1,4 @@
-# crawler 
+# Crawler 
 
 This crawler gets a CSV file as an input with the below structructure:
 

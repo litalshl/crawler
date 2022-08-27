@@ -1,7 +1,6 @@
 import json
 import os
 import asyncio
-from typing import Collection
 import requests
 from lxml import etree
 import sys
@@ -22,9 +21,10 @@ class Downloader:
             while self.urls:                
                 try:      
                     url = self.urls.pop()              
-                    dom = await self.__download_page(url, retries, websites)                    
+                    dom = await asyncio.get_event_loop().create_task(self.__download_page(url, retries, websites))
+                    # print("Downloader updated DB with page content: ", etree.tostring(dom, encoding='unicode', pretty_print=True))  # for debug
                     scrapper = Scrapper()
-                    await scrapper.scrape_page(url, dom, websites, self.urls)
+                    await asyncio.get_event_loop().create_task(scrapper.scrape_page(url, dom, websites, self.urls))
                 except:
                     if retries <= self.download_retries:
                         await asyncio.sleep(self.retries_interval)
@@ -34,7 +34,7 @@ class Downloader:
             print("Error while reading page, error: ",
                   sys.exc_info()[0])
 
-    async def __download_page(self, url: str, retries: int, websites: Collection):
+    async def __download_page(self, url: str, retries: int, websites):
         resp = requests.get(url)
         if resp.status_code == 200:
             dom = etree.HTML(resp.text)
@@ -42,8 +42,9 @@ class Downloader:
                 websites.update_one({'url': url},
                                     {"$set": {
                                         "dom": str(dom)
-                                    }})
+                                    }})                
+                print("Downloader updated DB with page content for page: ", url)
             except:
-                print("Website document was not updated in DB, error: ",
+                print("Downloader: website document was not updated in DB, error: ",
                       sys.exc_info()[0])
             return dom
