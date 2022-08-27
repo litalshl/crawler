@@ -20,22 +20,23 @@ class Downloader:
         try:
             retries = 0
             while self.urls:
-                try:
                     url = self.urls.pop()
                     dom = await asyncio.get_event_loop().create_task(self.__download_page(url, retries, websites))                    
                     scrapper = Scrapper()
                     await asyncio.get_event_loop().create_task(scrapper.scrape_page(url, dom, websites, self.urls))
-                except:
-                    if retries <= self.download_retries:
-                        await asyncio.sleep(self.retries_interval)
-                        await self.__download_page(url, retries, websites)
-                        retries += 1
         except:
             print("Error while reading page, error: ",
                   sys.exc_info()[0])
 
     async def __download_page(self, url: str, retries: int, websites):
-        resp = requests.get(url)
+        try:
+            retries += 1
+            resp = requests.get(url)
+        except:
+            if retries <= self.download_retries:
+                await asyncio.sleep(self.retries_interval)
+                await self.__download_page(url, retries, websites)   
+                return None          
         if resp.status_code == 200:
             dom = etree.HTML(resp.text)
             website_url = urllib.parse.urljoin(url, '/')
