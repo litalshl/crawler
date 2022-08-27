@@ -73,6 +73,7 @@ For scalable use, it is recommended to deploy each component on a seperate conta
 1. Urls set has duplicates when there's a query string e.g. http://www.pmichaud.com/wiki/Pm/HomePage?action=edit and http://www.pmichaud.com/wiki/Pm/HomePage?action=diff
 2. Need to add tests - units and integration tests based on the description below.
 3. Some urls content are not saved in DB with TypeError
+4. Scrapper sometimes has KeyError exception
 
 # Tests to perform:
 
