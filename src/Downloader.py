@@ -23,8 +23,11 @@ class Downloader:
                     url = self.urls.pop()
                     website_url = urllib.parse.urljoin(url, '/')
                     website_doc = websites.find_one({"url": website_url})
-                    if website_doc and website_doc["downloadedPages"] >= website_doc["numPagesToDownload"]:
-                        continue
+                    if website_doc:
+                        if website_doc["downloadedPages"] >= website_doc["numPagesToDownload"]:
+                            continue
+                        if url in website_doc["urls"]:
+                            continue
                     dom = await asyncio.get_event_loop().create_task(self.__download_page(url, retries, websites))                    
                     scrapper = Scrapper()
                     await asyncio.get_event_loop().create_task(scrapper.scrape_page(url, dom, websites, self.urls))
@@ -63,6 +66,8 @@ class Downloader:
 
     async def __update_subpage_dom(self, websites, url, dom, website_url):
         website_doc = websites.find_one({'url': website_url})
+        urls = website_doc["urls"]
+        urls.append(url)
         pages = website_doc['pages']
         pages.append({
             "url": url,
@@ -73,5 +78,6 @@ class Downloader:
         websites.update_one({'url': website_url},
                     {"$set": {
                         "pages": pages,
-                        "downloadedPages": downloaded_pages
+                        "downloadedPages": downloaded_pages,
+                        "urls": urls
                     }}) 
