@@ -23,8 +23,7 @@ class Scrapper:
             websites.update_one({'url': url},
                                 {"$set": {
                                     "urls": websiteDoc["urls"],
-                                    "pages": websiteDoc["pages"]}})
-            # print("Scrapper updated DB document with: ", websiteDoc["urls"])
+                                    "pages": websiteDoc["pages"]}})            
         except:
             print("Scrapper: website document was not updated in DB, error: ",
                   sys.exc_info()[0])

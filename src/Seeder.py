@@ -10,8 +10,7 @@ class Seeder:
         await self.__data_seeder(websites)
 
     async def __produce_url_message(self, url: str):
-        try:
-            # TODO: for a scalable solution, produce the message to Kafka topic here
+        try:            
             self.urls.add(url)
             print("Seeder added new url: ", url)
         except:

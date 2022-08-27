@@ -22,8 +22,7 @@ class Downloader:
             while self.urls:
                 try:
                     url = self.urls.pop()
-                    dom = await asyncio.get_event_loop().create_task(self.__download_page(url, retries, websites))
-                    # print("Downloader updated DB with page content: ", etree.tostring(dom, encoding='unicode', pretty_print=True))  # for debug
+                    dom = await asyncio.get_event_loop().create_task(self.__download_page(url, retries, websites))                    
                     scrapper = Scrapper()
                     await asyncio.get_event_loop().create_task(scrapper.scrape_page(url, dom, websites, self.urls))
                 except:
