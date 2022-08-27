@@ -58,3 +58,4 @@ MAX_OVERALL_CONNECTIONS - max overall connections defined for the whole applicat
 MAX_DOWNLOAD_RETRIES - max number of retries when page download failed - default is 3
 DOWNLOAD_RETRIES_INTERVAL_SEC - time between download retries in seconds - default is 5
 ```
+- For scalable use, it is recommended to deploy each component on a seperate container and change the urls queue to Kafka topic.
