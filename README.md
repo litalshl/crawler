@@ -33,6 +33,8 @@ The crawler saves all data in MongoDB. Currently in a single websites collection
         }
     ]
 ```
+# Usage
+
 - The application requires MongoDB. Connection details can be defined in the .env file as MONGODB_HOST and MONGODB_PORT. Currently supports no authentication connection only.
 For quick localhost install, you can refer to this website: 
 https://www.mongodb.com/try/download/community?tck=docs_server
@@ -46,6 +48,8 @@ you can also use the requirements file
 pip install -r requirements.txt
 ```
 
+# Configuration
+
 - To use different csv file, set in the .env file the parameter
 ``` 
 CSV_FILE 
@@ -58,4 +62,24 @@ MAX_OVERALL_CONNECTIONS - max overall connections defined for the whole applicat
 MAX_DOWNLOAD_RETRIES - max number of retries when page download failed - default is 3
 DOWNLOAD_RETRIES_INTERVAL_SEC - time between download retries in seconds - default is 5
 ```
-- For scalable use, it is recommended to deploy each component on a seperate container and change the urls queue to Kafka topic.
+
+# Scalability
+
+For scalable use, it is recommended to deploy each component on a seperate container and change the urls queue to Kafka topic.
+
+
+# Issues to fix:
+
+1. Urls set has duplicates of the form of actions on the same webpage, like http://www.pmichaud.com/wiki/Pm/HomePage?action=edit
+   and http://www.pmichaud.com/wiki/Pm/HomePage?action=diff
+2. Need to add tests - units and integration tests based on the description below.
+
+# Tests to perform:
+
+1. Settings are read and used as expected
+2. DB - data is saved correctly and retrieved correctlly
+3. Logic - no duplications in pages and urls, number of retries, number of open connections,
+    number of pages downloaded as defined, correct handel of loops
+4. Messages - no duplications of urls, message is read only once
+5. Seeder - csv file is read correctlly, adds correct metadata to the DB website collection and
+    correct messages are added

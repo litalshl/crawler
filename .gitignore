@@ -3,3 +3,6 @@ __pycache__/
 .gitignore
 src/__pycache__/
 .vscode/launch.json
+src/__pycache__/Downloader.cpython-310.pyc
+src/__pycache__/Scrapper.cpython-310.pyc
+src/__pycache__/Seeder.cpython-310.pyc

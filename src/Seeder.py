@@ -7,13 +7,14 @@ import pandas as pd
 
 class Seeder:
 
-    async def main(self, websites: Collection):
+    async def main(self, websites: Collection, urls):
+        self.urls = urls
         await self.__data_seeder(websites)
 
-    async def __produce_url_message(self, url):
+    async def __produce_url_message(self, url: str):
         try:
-            # TODO: add url to urls queue
-            print()
+            # TODO: for a scalable solution, produce the message to Kafka topic here
+            self.urls.add(url)
         except:
             print("Exception while producing url message, error: ",
                   sys.exc_info()[0])
@@ -35,8 +36,4 @@ class Seeder:
                 print("Website was not added to DB, error: ",
                       sys.exc_info()[0])
 
-            try:
-                await self.__produce_url_message(row["website_host"])
-            except:
-                print("Exception while producing url message, error: ",
-                      sys.exc_info()[0])            
+            await self.__produce_url_message(row["website_host"])

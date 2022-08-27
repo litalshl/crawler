@@ -11,11 +11,11 @@ class Main:
         load_dotenv()
         db = await self.__init_database()
         websites = db.websites
-
+        urls = set()
         seeder = Seeder()
-        await seeder.main(websites)
+        await seeder.main(websites, urls)
         downloader = Downloader()
-        await downloader.main(websites)
+        await downloader.main(websites, urls)
 
     async def __init_database(self):
         client = MongoClient(os.getenv("MONGODB_HOST"),
@@ -27,13 +27,3 @@ class Main:
 
 
 asyncio.run(Main().main())
-
-
-# Tests to perform:
-# 1. Settings are read and used as expected
-# 2. DB - data is saved correctly and retrieved correctlly
-# 3. Logic - no duplications in pages and urls, number of retries, number of open connections,
-#  number of pages downloaded as defined, correct handel of loops
-# 4. Messages - no duplications of urls, message is read only once
-# 5. Seeder - csv file is read correctlly, adds correct metadata to the DB website collection and
-#  correct messages are added
