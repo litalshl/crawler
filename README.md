@@ -14,6 +14,9 @@ For each website host in the CSV file, the crawler will save it's HTML content a
 
 For all referred pages that are on the same website host, the crawler will do the same, save their content and scrap the urls for more unreached pages.
 
+This diagram describes the application components and interactions:
+![Screenshot](Crawler Design.jpg)
+
 The crawler saves all data in MongoDB. Currently in a single websites collection, with the below document schema:
 
     url : string <index>
