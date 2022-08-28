@@ -12,13 +12,14 @@ class Downloader:
 
     async def main(self, websites, urls):
         self.urls = urls
+        self.retries = 0
         self.download_retries = int(os.getenv("MAX_DOWNLOAD_RETRIES"))
         self.retries_interval = int(os.getenv("DOWNLOAD_RETRIES_INTERVAL_SEC"))
         await self.__consume_url_message(websites)
 
     async def __consume_url_message(self, websites):
         try:
-            retries = 0
+            self.retries = 0
             while self.urls:
                     url = self.urls.pop()
                     website_url = urllib.parse.urljoin(url, '/')
@@ -28,21 +29,21 @@ class Downloader:
                             continue
                         if url in website_doc["urls"]:
                             continue
-                    dom = await asyncio.get_event_loop().create_task(self.__download_page(url, retries, websites))                    
+                    dom = await asyncio.get_event_loop().create_task(self.__download_page(url, websites))                    
                     scrapper = Scrapper()
                     await asyncio.get_event_loop().create_task(scrapper.scrape_page(url, dom, websites, self.urls))
         except:
             print("Error while reading page, error: ",
                   sys.exc_info()[0])
 
-    async def __download_page(self, url: str, retries: int, websites):
+    async def __download_page(self, url: str, websites):
         try:
-            retries += 1
+            self.retries += 1
             resp = requests.get(url)
         except:
-            if retries <= self.download_retries:
+            if self.retries <= self.download_retries:
                 await asyncio.sleep(self.retries_interval)
-                await self.__download_page(url, retries, websites)   
+                await self.__download_page(url, self.retries, websites)   
                 return None          
         if resp.status_code == 200:
             dom = etree.HTML(resp.text)
