@@ -75,11 +75,11 @@ For large seed files, it might be beneficial to split the file between the Seede
 
 # Issues to fix:
 
-1. Concurency should be improved or moved to a scalable solution (see Scalbility section above. The application doesn't currently satisfy the concurrent connections requirement 
-2. Urls set has duplicates when there's a query string e.g. http://www.pmichaud.com/wiki/Pm/HomePage?action=edit and http://www.pmichaud.com/wiki/Pm/HomePage?action=diff
+1. Concurency should be improved or moved to a scalable solution (see Scalbility section above).
+2. Urls set has duplicates when there's a query string e.g. http://www.pmichaud.com/wiki/Pm/HomePage?action=edit
 3. Need to add tests - units and integration tests based on the description below.
-4. Some urls content are not saved in DB with TypeError
-5. Scrapper sometimes has KeyError exception
+4. Some urls content are not saved in DB with TypeError - need to investigate and fix
+5. Scrapper sometimes has KeyError exception - need to investigate and fix
 
 # Tests to perform:
 
