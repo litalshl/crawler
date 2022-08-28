@@ -12,14 +12,12 @@ class Downloader:
 
     async def main(self, websites, urls):
         self.urls = urls
-        self.retries = 0
         self.download_retries = int(os.getenv("MAX_DOWNLOAD_RETRIES"))
         self.retries_interval = int(os.getenv("DOWNLOAD_RETRIES_INTERVAL_SEC"))
         await self.__consume_url_message(websites)
 
     async def __consume_url_message(self, websites):
         try:
-            self.retries = 0
             while self.urls:
                     url = self.urls.pop()
                     website_url = urllib.parse.urljoin(url, '/')
@@ -37,26 +35,27 @@ class Downloader:
                   sys.exc_info()[0])
 
     async def __download_page(self, url: str, websites):
-        try:
-            self.retries += 1
-            resp = requests.get(url)
-        except:
-            if self.retries <= self.download_retries:
-                await asyncio.sleep(self.retries_interval)
-                await self.__download_page(url, self.retries, websites)   
-                return None          
-        if resp.status_code == 200:
-            dom = etree.HTML(resp.text)
-            website_url = urllib.parse.urljoin(url, '/')
+        dom = ""
+        retries = 0
+        while retries <= self.download_retries:
             try:
-                if website_url == url:
-                    self.__update_website_dom(websites, url, dom)
-                else:
-                    await self.__update_subpage_dom(websites, url, dom, website_url)
-                print("Downloader updated DB with page content for page: ", url)
+                retries += 1
+                resp = requests.get(url)
             except:
-                print("Downloader: website document was not updated in DB, error: ",
-                      sys.exc_info()[0])
+                await asyncio.sleep(self.retries_interval)
+                continue       
+            if resp.status_code == 200:
+                dom = etree.HTML(resp.text)
+                website_url = urllib.parse.urljoin(url, '/')
+                try:
+                    if website_url == url:
+                        self.__update_website_dom(websites, url, dom)
+                    else:
+                        await self.__update_subpage_dom(websites, url, dom, website_url)
+                    print("Downloader updated DB with page content for page: ", url)
+                except:
+                    print("Downloader: website document was not updated in DB, error: ",
+                        sys.exc_info()[0])
             return dom
 
     def __update_website_dom(self, websites, url, dom):
